@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>home page</title>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        hello [[${name}]]
+
+        <a href="asdasd">sadasdd</a>
+
+
+        <form action="/" method="post" enctype="multipart/form-data">
+            <input type="text" name="username" placeholder="username">
+            <input type="submit" name="" placeholder="">
+            <span th:if="${!presented}">[[${message}]]</span>
+
+        </form>
+
+        <ul>
+            <li th:each="user : ${users}" >
+                [[${user.id + ' ' + user.username + ' ' + user.avatar}]]
+                <img th:src="${user.avatar}" alt="">
+
+            </li>
+
+        </ul>
+
+
+        <!--<p th:text="${name}"></p>-->
+
+
+        <form action="/addAvatar" method="post" enctype="multipart/form-data">
+            <input type="file" name="avatar" placeholder="avatar">
+            <select name="choosenUser">
+                <option th:each="user : ${users}" th:value=${user.id}>[[${user.username}]]</option>
+
+            </select>
+
+            <input type="submit" name="" placeholder="">
+
+
+        </form>
+
+    </body>
+</html>
