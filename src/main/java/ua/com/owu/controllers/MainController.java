@@ -2,6 +2,8 @@ package ua.com.owu.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,6 +16,8 @@ import ua.com.owu.controllers.components.UserValidator;
 import ua.com.owu.controllers.models.User;
 import ua.com.owu.controllers.service.UserService;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -25,6 +29,23 @@ public class MainController {
     @Autowired
     @Qualifier("userService1")
     private UserService service;
+
+
+    @Autowired
+    private JavaMailSender sender;
+
+    public void send(String email, MultipartFile file) throws MessagingException {
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        helper.setTo(email);
+        helper.setSubject("sprnig boot mail sender");
+        helper.setText("visit our  <a href='https://owu.com.ua'>site</a>", true);
+
+        helper.addAttachment(file.getOriginalFilename(), file);
+        sender.send(message);
+
+
+    }
 
 
     @GetMapping("/")
@@ -76,7 +97,10 @@ public class MainController {
 
     @PostMapping("/addAvatar")
     public String addAvatar(@RequestParam int choosenUser,
-                            @RequestParam MultipartFile avatar) throws IOException {
+                            @RequestParam MultipartFile avatar,
+                            @RequestParam String email
+    ) throws IOException, MessagingException {
+        send(email, avatar);
         System.out.println(choosenUser);
 
 
@@ -98,6 +122,7 @@ public class MainController {
         service.save(user);
 
         System.out.println(user);
+
         return "redirect:/";
     }
 
